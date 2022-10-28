@@ -28,6 +28,22 @@ class Classlist
     end
   end
 
+  # Replaces an existing token with a new token. If the first token doesn't
+  # exist, #replace returns false immediately, without adding the new token to
+  # the token list.
+  def replace(old_token, new_token)
+    return false unless entries.include?(old_token)
+
+    if entries.include?(new_token)
+      entries.delete(old_token)
+    else
+      index = entries.index(old_token)
+      entries[index] = new_token
+    end
+
+    true
+  end
+
   def to_a
     entries
   end

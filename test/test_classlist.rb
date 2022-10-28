@@ -69,6 +69,31 @@ class TestClasslistArrayRepresentation < Minitest::Test
   end
 end
 
+class TestClasslistReplace < Minitest::Test
+  def test_it_replaces_one
+    classlist = Classlist.new("class anotherclass")
+    classlist.replace("class", "not")
+    assert_equal(["not", "anotherclass"], classlist.to_a)
+  end
+
+  def test_it_does_nothing_when_token_does_not_exist
+    classlist = Classlist.new("class")
+    classlist.replace("water", "wine")
+    assert_equal(["class"], classlist.to_a)
+  end
+
+  def test_it_returns_false_when_token_does_not_exist
+    classlist = Classlist.new("class")
+    refute(classlist.replace("water", "wine"))
+  end
+
+  def test_it_does_not_add_the_new_token_if_it_already_exists
+    classlist = Classlist.new("there can be only one")
+    classlist.replace("there", "one")
+    assert_equal(["can", "be", "only", "one"], classlist.to_a)
+  end
+end
+
 class TestClasslistRemove < Minitest::Test
   def test_it_removes_one
     classlist = Classlist.new("class anotherclass")
