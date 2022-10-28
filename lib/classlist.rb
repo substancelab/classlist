@@ -7,7 +7,7 @@ class Classlist
 
   attr_reader :entries
 
-  def initialize(entries)
+  def initialize(entries = [])
     @entries = build_entries(entries)
   end
 

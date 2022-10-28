@@ -23,6 +23,12 @@ class TestClasslistInitialization < Minitest::Test
     assert_equal [], result.entries
   end
 
+  def test_it_can_be_instantiated_with_nothing
+    result = Classlist.new
+    assert_instance_of(Classlist, result)
+    assert_equal [], result.entries
+  end
+
   def test_it_can_be_instantiated_with_another_classlist
     result = Classlist.new(Classlist.new("this"))
     assert_instance_of(Classlist, result)
