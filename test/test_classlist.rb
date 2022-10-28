@@ -4,11 +4,7 @@ require "test_helper"
 
 require "classlist"
 
-class TestClasslist < Minitest::Test
-  def test_that_it_has_a_version_number
-    refute_nil ::Classlist::VERSION
-  end
-
+class TestClasslistInitialization < Minitest::Test
   def test_it_can_be_instantiated_with_a_string
     result = Classlist.new("foo bar")
     assert_instance_of(Classlist, result)
@@ -31,5 +27,12 @@ class TestClasslist < Minitest::Test
     result = Classlist.new(Classlist.new("this"))
     assert_instance_of(Classlist, result)
     assert_equal ["this"], result.entries
+  end
+end
+
+class TestClasslistStringRepresentation < Minitest::Test
+  def test_it_returns_a_string_that_can_be_used_in_class_attribute
+    classlist = Classlist.new("foo bar")
+    assert_equal("foo bar", classlist.to_s)
   end
 end
