@@ -7,6 +7,14 @@ class Classlist
 
   attr_reader :entries
 
+  # Adds the given tokens to the list, omitting any that are already present.
+  def add(tokens)
+    entries = build_entries(tokens)
+    entries.each do |entry|
+      self.entries.push(entry) unless self.entries.include?(entry)
+    end
+  end
+
   def initialize(entries = [])
     @entries = build_entries(entries)
   end
@@ -20,6 +28,8 @@ class Classlist
   end
 
   private
+
+  attr_writer :entries
 
   def build_entries(entries)
     case entries

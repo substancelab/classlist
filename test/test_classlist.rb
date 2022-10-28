@@ -36,6 +36,32 @@ class TestClasslistInitialization < Minitest::Test
   end
 end
 
+class TestClasslistAdd < Minitest::Test
+  def test_it_adds_one
+    classlist = Classlist.new("original")
+    classlist.add("anotherclass")
+    assert_equal(["original", "anotherclass"], classlist.to_a)
+  end
+
+  def test_it_adds_many
+    classlist = Classlist.new("original")
+    classlist.add(["this", "anotherclass"])
+    assert_equal(["original", "this", "anotherclass"], classlist.to_a)
+  end
+
+  def test_it_adds_many_from_string
+    classlist = Classlist.new("original")
+    classlist.add("this anotherclass")
+    assert_equal(["original", "this", "anotherclass"], classlist.to_a)
+  end
+
+  def test_it_ignores_existing_tokens
+    classlist = Classlist.new("excellent")
+    classlist.add("this is excellent")
+    assert_equal(["excellent", "this", "is"], classlist.to_a)
+  end
+end
+
 class TestClasslistArrayRepresentation < Minitest::Test
   def test_it_returns_entries
     classlist = Classlist.new("foo bar")
