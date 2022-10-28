@@ -69,6 +69,32 @@ class TestClasslistArrayRepresentation < Minitest::Test
   end
 end
 
+class TestClasslistRemove < Minitest::Test
+  def test_it_removes_one
+    classlist = Classlist.new("class anotherclass")
+    classlist.remove("class")
+    assert_equal(["anotherclass"], classlist.to_a)
+  end
+
+  def test_it_removes_many
+    classlist = Classlist.new("class anotherclass")
+    classlist.remove(["class", "anotherclass"])
+    assert_equal([], classlist.to_a)
+  end
+
+  def test_it_removes_many_from_string
+    classlist = Classlist.new("foo bar baz")
+    classlist.remove("foo baz")
+    assert_equal(["bar"], classlist.to_a)
+  end
+
+  def test_it_ignores_nonexisting_tokens
+    classlist = Classlist.new("this is excellent")
+    classlist.remove("everything")
+    assert_equal(["this", "is", "excellent"], classlist.to_a)
+  end
+end
+
 class TestClasslistStringRepresentation < Minitest::Test
   def test_it_returns_a_string_that_can_be_used_in_class_attribute
     classlist = Classlist.new("foo bar")

@@ -19,6 +19,15 @@ class Classlist
     @entries = build_entries(entries)
   end
 
+  # Removes the specified tokens from the classlist, ignoring any that are not
+  # present.
+  def remove(tokens)
+    entries = build_entries(tokens)
+    entries.each do |entry|
+      self.entries.delete(entry)
+    end
+  end
+
   def to_a
     entries
   end
