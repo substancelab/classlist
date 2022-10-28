@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
   spec.summary = "Ruby implementation of the Element.classList DOM API"
   spec.description = "Serverside manipulation of lists of CSS classnames that play nicely with View Components."
   spec.homepage = "https://github.com/substancelab/classlist"
-  spec.required_ruby_version = ">= 2.6.0"
+  spec.required_ruby_version = ">= 2.7.0"
 
   spec.metadata["homepage_uri"] = spec.homepage
 
