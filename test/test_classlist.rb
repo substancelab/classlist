@@ -30,6 +30,13 @@ class TestClasslistInitialization < Minitest::Test
   end
 end
 
+class TestClasslistArrayRepresentation < Minitest::Test
+  def test_it_returns_entries
+    classlist = Classlist.new("foo bar")
+    assert_equal(["foo", "bar"], classlist.to_a)
+  end
+end
+
 class TestClasslistStringRepresentation < Minitest::Test
   def test_it_returns_a_string_that_can_be_used_in_class_attribute
     classlist = Classlist.new("foo bar")

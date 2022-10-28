@@ -11,6 +11,10 @@ class Classlist
     @entries = build_entries(entries)
   end
 
+  def to_a
+    entries
+  end
+
   def to_s
     entries.join(" ")
   end
