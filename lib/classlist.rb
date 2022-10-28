@@ -52,6 +52,28 @@ class Classlist
     entries.join(" ")
   end
 
+  # Removes an existing token from the list and returns false. If the token
+  # doesn't exist it's added and the function returns true.
+  #
+  # If force is included, it turns the toggle into a one way-only operation. If
+  # set to false, then token will only be removed, but not added. If set to
+  # true, then token will only be added, but not removed.
+  def toggle(token, force = nil)
+    if entries.include?(token)
+      entries.delete(token) unless force == true
+      result = false
+    else
+      entries.push(token) unless force == false
+      result = true
+    end
+
+    if force.nil?
+      result
+    else
+      force
+    end
+  end
+
   private
 
   attr_writer :entries

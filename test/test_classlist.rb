@@ -120,6 +120,64 @@ class TestClasslistRemove < Minitest::Test
   end
 end
 
+class TestClasslistToggle < Minitest::Test
+  def test_it_removes_token_if_it_exists
+    classlist = Classlist.new("class anotherclass")
+    classlist.toggle("class")
+    assert_equal(["anotherclass"], classlist.to_a)
+  end
+
+  def test_it_returns_false_if_token_was_removed
+    classlist = Classlist.new("class anotherclass")
+    refute(classlist.toggle("class"))
+  end
+
+  def test_it_adds_token_if_it_does_not_exist
+    classlist = Classlist.new("anotherclass")
+    classlist.toggle("class")
+    assert_equal(["anotherclass", "class"], classlist.to_a)
+  end
+
+  def test_it_returns_true_if_token_was_added
+    classlist = Classlist.new("anotherclass")
+    assert(classlist.toggle("class"))
+  end
+
+  def test_force_false_removes_token_if_it_exists
+    classlist = Classlist.new("class anotherclass")
+    classlist.toggle("class", false)
+    assert_equal(["anotherclass"], classlist.to_a)
+  end
+
+  def test_force_false_does_not_add_token_if_it_does_not_exist
+    classlist = Classlist.new("anotherclass")
+    classlist.toggle("class", false)
+    assert_equal(["anotherclass"], classlist.to_a)
+  end
+
+  def test_force_false_returns_false
+    classlist = Classlist.new("anotherclass")
+    refute(classlist.toggle("class", false))
+  end
+
+  def test_force_true_adds_token_if_it_does_not_exist
+    classlist = Classlist.new("anotherclass")
+    classlist.toggle("class", true)
+    assert_equal(["anotherclass", "class"], classlist.to_a)
+  end
+
+  def test_force_true_does_not_add_token_if_it_exist
+    classlist = Classlist.new("class anotherclass")
+    classlist.toggle("class", true)
+    assert_equal(["class", "anotherclass"], classlist.to_a)
+  end
+
+  def test_force_true_returns_true
+    classlist = Classlist.new("class anotherclass")
+    refute(classlist.toggle("class"))
+  end
+end
+
 class TestClasslistStringRepresentation < Minitest::Test
   def test_it_returns_a_string_that_can_be_used_in_class_attribute
     classlist = Classlist.new("foo bar")
