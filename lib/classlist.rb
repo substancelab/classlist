@@ -15,6 +15,11 @@ class Classlist
     end
   end
 
+  def contains?(token)
+    entries.include?(token)
+  end
+  alias_method :contains, :contains?
+
   def initialize(entries = [])
     @entries = build_entries(entries)
   end

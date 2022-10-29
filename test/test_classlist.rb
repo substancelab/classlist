@@ -69,6 +69,28 @@ class TestClasslistArrayRepresentation < Minitest::Test
   end
 end
 
+class TestClasslistContains < Minitest::Test
+  def test_returns_true_if_list_contains_the_token
+    classlist = Classlist.new("foo bar baz")
+    assert(classlist.contains?("bar"))
+  end
+
+  def test_returns_false_if_list_does_not_contain_the_token
+    classlist = Classlist.new("foo bar baz")
+    refute(classlist.contains?("something"))
+  end
+
+  def test_it_is_case_sensitive
+    classlist = Classlist.new("this")
+    refute(classlist.contains?("THIS"))
+  end
+
+  def test_aliased_as_contains
+    classlist = Classlist.new("foo bar baz")
+    assert(classlist.contains("foo"))
+  end
+end
+
 class TestClassListItem < Minitest::Test
   def test_returns_the_token_at_index
     classlist = Classlist.new("foo bar")
