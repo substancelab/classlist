@@ -19,6 +19,14 @@ class Classlist
     @entries = build_entries(entries)
   end
 
+  # Returns the item in the list by its index, or null if the index is greater
+  # than or equal to the list's length.
+  def item(index)
+    return nil if index.negative?
+
+    entries[index]
+  end
+
   # An integer representing the number of objects stored in the object.
   def length
     entries.length

@@ -69,6 +69,23 @@ class TestClasslistArrayRepresentation < Minitest::Test
   end
 end
 
+class TestClassListItem < Minitest::Test
+  def test_returns_the_token_at_index
+    classlist = Classlist.new("foo bar")
+    assert_equal("foo", classlist.item(0))
+  end
+
+  def test_returns_nil_if_index_is_greater_than_length
+    classlist = Classlist.new("foo bar")
+    assert_nil(classlist.item(3))
+  end
+
+  def test_returns_nil_if_index_is_lower_than_zero
+    classlist = Classlist.new("foo bar")
+    assert_nil(classlist.item(-1))
+  end
+end
+
 class TestClasslistLength < Minitest::Test
   def test_returns_the_number_of_tokens
     classlist = Classlist.new("foo bar")
