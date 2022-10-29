@@ -55,10 +55,10 @@ class Classlist
   # exist, #replace returns false immediately, without adding the new token to
   # the token list.
   def replace(old_token, new_token)
-    return false unless entries.include?(old_token)
+    return false unless include?(old_token)
 
-    if entries.include?(new_token)
-      entries.delete(old_token)
+    if include?(new_token)
+      remove(old_token)
     else
       index = entries.index(old_token)
       entries[index] = new_token
@@ -84,10 +84,10 @@ class Classlist
   # true, then token will only be added, but not removed.
   def toggle(token, force = nil)
     if entries.include?(token)
-      entries.delete(token) unless force == true
+      remove(token) unless force == true
       result = false
     else
-      entries.push(token) unless force == false
+      add(token) unless force == false
       result = true
     end
 
