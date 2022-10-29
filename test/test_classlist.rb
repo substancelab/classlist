@@ -69,6 +69,13 @@ class TestClasslistArrayRepresentation < Minitest::Test
   end
 end
 
+class TestClasslistLength < Minitest::Test
+  def test_returns_the_number_of_tokens
+    classlist = Classlist.new("foo bar")
+    assert_equal(2, classlist.length)
+  end
+end
+
 class TestClasslistReplace < Minitest::Test
   def test_it_replaces_one
     classlist = Classlist.new("class anotherclass")

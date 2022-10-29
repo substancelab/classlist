@@ -19,6 +19,11 @@ class Classlist
     @entries = build_entries(entries)
   end
 
+  # An integer representing the number of objects stored in the object.
+  def length
+    entries.length
+  end
+
   # Removes the specified tokens from the classlist, ignoring any that are not
   # present.
   def remove(tokens)
