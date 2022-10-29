@@ -233,6 +233,13 @@ class TestClasslistToggle < Minitest::Test
     classlist = Classlist.new("class anotherclass")
     refute(classlist.toggle("class"))
   end
+
+  def test_raises_error_when_token_contains_space
+    classlist = Classlist.new("class anotherclass")
+    assert_raises(Classlist::ArgumentError) {
+      classlist.toggle("with space")
+    }
+  end
 end
 
 class TestClasslistStringRepresentation < Minitest::Test

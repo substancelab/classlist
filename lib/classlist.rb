@@ -5,6 +5,8 @@ require "forwardable"
 require_relative "classlist/version"
 
 class Classlist
+  class ArgumentError < ::ArgumentError; end
+
   class Error < StandardError; end
 
   extend Forwardable
@@ -83,6 +85,8 @@ class Classlist
   # set to false, then token will only be removed, but not added. If set to
   # true, then token will only be added, but not removed.
   def toggle(token, force = nil)
+    raise ArgumentError, "The token can not contain whitespace." if token.to_s.include?(" ")
+
     if entries.include?(token)
       remove(token) unless force == true
       result = false
