@@ -69,28 +69,6 @@ class TestClasslistArrayRepresentation < Minitest::Test
   end
 end
 
-class TestClasslistContains < Minitest::Test
-  def test_returns_true_if_list_contains_the_token
-    classlist = Classlist.new("foo bar baz")
-    assert(classlist.contains?("bar"))
-  end
-
-  def test_returns_false_if_list_does_not_contain_the_token
-    classlist = Classlist.new("foo bar baz")
-    refute(classlist.contains?("something"))
-  end
-
-  def test_it_is_case_sensitive
-    classlist = Classlist.new("this")
-    refute(classlist.contains?("THIS"))
-  end
-
-  def test_aliased_as_contains
-    classlist = Classlist.new("foo bar baz")
-    assert(classlist.contains("foo"))
-  end
-end
-
 class TestClasslistEach < Minitest::Test
   def test_iterates_over_the_entries
     classlist = Classlist.new("foo bar baz")
@@ -116,6 +94,28 @@ class TestClassListItem < Minitest::Test
   def test_returns_nil_if_index_is_lower_than_zero
     classlist = Classlist.new("foo bar")
     assert_nil(classlist.item(-1))
+  end
+end
+
+class TestClasslistIncludes < Minitest::Test
+  def test_returns_true_if_list_contains_the_token
+    classlist = Classlist.new("foo bar baz")
+    assert(classlist.include?("bar"))
+  end
+
+  def test_returns_false_if_list_does_not_contain_the_token
+    classlist = Classlist.new("foo bar baz")
+    refute(classlist.include?("something"))
+  end
+
+  def test_it_is_case_sensitive
+    classlist = Classlist.new("this")
+    refute(classlist.include?("THIS"))
+  end
+
+  def test_aliased_as_contains
+    classlist = Classlist.new("foo bar baz")
+    assert(classlist.contains("foo"))
   end
 end
 

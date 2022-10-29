@@ -24,6 +24,10 @@ Or install it yourself as:
 
 TODO: Write usage instructions here
 
+## DOM compatibility
+
+While Classlist aims to be a feature-compatible version of [`DOMTokenList`](https://developer.mozilla.org/en-US/docs/Web/API/DOMTokenList) that doesn't always make for particularily Ruby'esque methods. In cases where Ruby has similar methods named differently than the DOM, we'll prefer Ruby-style method names while keeping aliases with the names from `DOMTokenList`.
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. You can also run `bin/console` for an interactive prompt that will allow you to experiment.

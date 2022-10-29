@@ -20,10 +20,10 @@ class Classlist
     end
   end
 
-  def contains?(token)
+  def include?(token)
     entries.include?(token)
   end
-  alias_method :contains, :contains?
+  alias_method :contains, :include?
 
   def initialize(entries = [])
     @entries = build_entries(entries)
