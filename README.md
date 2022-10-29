@@ -22,7 +22,29 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+```ruby
+# Create a new classlist - these are equivalent:
+classes = Classlist.new("pt-6 space-y-4")
+classes = Classlist.new(["pt-6", "space-y-4"])
+
+# Add classes
+classes.add("md:p-8 text-center")
+classes.to_s #=> "pt-6 space-y-4 md:p-8 text-center"
+
+# Remove classes
+classes.remove("md:p-8")
+classes.to_s #=> "pt-6 space-y-4 text-center"
+
+# Toggle classes
+classes.toggle("hidden")
+classes.to_s #=> "pt-6 space-y-4 text-center hidden"
+classes.toggle("text-center")
+classes.to_s #=> "pt-6 space-y-4 hidden"
+
+# Replace classes
+classes.replace("hidden", "block")
+classes.to_s #=> "pt-6 space-y-4 block"
+```
 
 ## DOM compatibility
 
