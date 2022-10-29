@@ -91,6 +91,17 @@ class TestClasslistContains < Minitest::Test
   end
 end
 
+class TestClasslistEach < Minitest::Test
+  def test_iterates_over_the_entries
+    classlist = Classlist.new("foo bar baz")
+    result = []
+    classlist.each do |token|
+      result << token
+    end
+    assert_equal(["foo", "bar", "baz"], result)
+  end
+end
+
 class TestClassListItem < Minitest::Test
   def test_returns_the_token_at_index
     classlist = Classlist.new("foo bar")

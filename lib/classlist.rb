@@ -1,9 +1,14 @@
 # frozen_string_literal: true
 
+require "forwardable"
+
 require_relative "classlist/version"
 
 class Classlist
   class Error < StandardError; end
+
+  extend Forwardable
+  def_delegators :@entries, :each
 
   attr_reader :entries
 
