@@ -51,6 +51,7 @@ class Classlist
   def to_s
     entries.join(" ")
   end
+  alias_method :value, :to_s
 
   # Removes an existing token from the list and returns false. If the token
   # doesn't exist it's added and the function returns true.

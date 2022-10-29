@@ -184,3 +184,10 @@ class TestClasslistStringRepresentation < Minitest::Test
     assert_equal("foo bar", classlist.to_s)
   end
 end
+
+class TestClasslistValue < Minitest::Test
+  def test_returns_a_string_that_can_be_used_in_class_attribute
+    classlist = Classlist.new("foo bar")
+    assert_equal("foo bar", classlist.value)
+  end
+end
