@@ -14,6 +14,12 @@ class Classlist
 
   attr_reader :entries
 
+  def ==(other)
+    return false unless other.is_a?(self.class)
+
+    entries == other.entries
+  end
+
   # Adds the given tokens to the list, omitting any that are already present.
   def add(tokens)
     entries = build_entries(tokens)

@@ -80,6 +80,25 @@ class TestClasslistEach < Minitest::Test
   end
 end
 
+class TestClasslistEquality < Minitest::Test
+  def test_equal_to_itself
+    classlist = Classlist.new("foo bar")
+    assert_equal(classlist, classlist)
+  end
+
+  def test_equal_to_another_classlist_with_same_tokens
+    one = Classlist.new("foo bar")
+    other = Classlist.new("foo bar")
+    assert_equal(one, other)
+  end
+
+  def test_not_equal_to_another_classlist_with_same_tokens_in_different_order
+    one = Classlist.new("foo bar")
+    other = Classlist.new("bar foo")
+    refute_equal(one, other)
+  end
+end
+
 class TestClassListItem < Minitest::Test
   def test_returns_the_token_at_index
     classlist = Classlist.new("foo bar")
