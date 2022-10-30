@@ -6,19 +6,19 @@ require "classlist"
 
 class TestClasslistAddition < Minitest::Test
   def test_adding_a_string_returns_the_token_added_to_entries
-    classlist = Classlist.new
+    classlist = Classlist.new("foo")
     result = classlist + "foo bar"
     assert_equal(["foo", "bar"], result.to_a)
   end
 
   def test_adding_an_array_returns_the_array_added_to_entries
-    classlist = Classlist.new
+    classlist = Classlist.new("foo")
     result = classlist + ["foo", "bar"]
     assert_equal(["foo", "bar"], result.to_a)
   end
 
   def test_adding_a_classlist_returns_the_classlist_entries_added_to_entries
-    classlist = Classlist.new
+    classlist = Classlist.new("foo")
     result = classlist + Classlist.new(["foo", "bar"])
     assert_equal(["foo", "bar"], result.to_a)
   end
