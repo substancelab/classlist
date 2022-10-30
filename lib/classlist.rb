@@ -14,9 +14,15 @@ class Classlist
 
   attr_reader :entries
 
+  # Returns the Classlist resulting from adding other to this classlist.
   def +(other)
-    other = build_entries(other)
-    Classlist.new(entries + other.to_a)
+    result = if other.is_a?(Classlist)
+      other.merge(self)
+    else
+      entries + build_entries(other)
+    end
+
+    Classlist.new(result)
   end
 
   def ==(other)
@@ -53,6 +59,11 @@ class Classlist
   # An integer representing the number of objects stored in the object.
   def length
     entries.length
+  end
+
+  # Returns a list of tokens in this classlist merged with the given classlist.
+  def merge(classlist)
+    (classlist.entries + entries).uniq
   end
 
   # Removes the specified tokens from the classlist, ignoring any that are not
