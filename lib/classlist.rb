@@ -15,7 +15,8 @@ class Classlist
   attr_reader :entries
 
   def +(other)
-    Classlist.new(entries + other)
+    other = build_entries(other)
+    Classlist.new(entries + other.to_a)
   end
 
   def ==(other)
