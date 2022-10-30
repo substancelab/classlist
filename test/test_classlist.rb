@@ -4,6 +4,20 @@ require "test_helper"
 
 require "classlist"
 
+class TestClasslistAddition < Minitest::Test
+  def test_adding_an_array_returns_the_array_added_to_entries
+    classlist = Classlist.new
+    result = classlist + ["foo", "bar"]
+    assert_equal(["foo", "bar"], result.to_a)
+  end
+
+  def test_does_not_change_the_original_classlist
+    classlist = Classlist.new([])
+    _result = classlist + ["foo", "bar"]
+    assert_equal([], classlist.to_a)
+  end
+end
+
 class TestClasslistInitialization < Minitest::Test
   def test_it_can_be_instantiated_with_a_string
     result = Classlist.new("foo bar")

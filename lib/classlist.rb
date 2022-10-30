@@ -14,6 +14,10 @@ class Classlist
 
   attr_reader :entries
 
+  def +(other)
+    Classlist.new(entries + other)
+  end
+
   def ==(other)
     return false unless other.is_a?(self.class)
 
