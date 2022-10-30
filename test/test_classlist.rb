@@ -4,6 +4,32 @@ require "test_helper"
 
 require "classlist"
 
+class TestClasslistAddition < Minitest::Test
+  def test_adding_a_string_returns_the_token_added_to_entries
+    classlist = Classlist.new("foo")
+    result = classlist + "foo bar"
+    assert_equal(["foo", "bar"], result.to_a)
+  end
+
+  def test_adding_an_array_returns_the_array_added_to_entries
+    classlist = Classlist.new("foo")
+    result = classlist + ["foo", "bar"]
+    assert_equal(["foo", "bar"], result.to_a)
+  end
+
+  def test_adding_a_classlist_returns_the_classlist_entries_added_to_entries
+    classlist = Classlist.new("foo")
+    result = classlist + Classlist.new(["foo", "bar"])
+    assert_equal(["foo", "bar"], result.to_a)
+  end
+
+  def test_does_not_change_the_original_classlist
+    classlist = Classlist.new([])
+    _result = classlist + ["foo", "bar"]
+    assert_equal([], classlist.to_a)
+  end
+end
+
 class TestClasslistInitialization < Minitest::Test
   def test_it_can_be_instantiated_with_a_string
     result = Classlist.new("foo bar")
@@ -33,6 +59,11 @@ class TestClasslistInitialization < Minitest::Test
     result = Classlist.new(Classlist.new("this"))
     assert_instance_of(Classlist, result)
     assert_equal ["this"], result.entries
+  end
+
+  def test_ignore_repeated_tokens
+    result = Classlist.new("foo foo foo")
+    assert_equal ["foo"], result.entries
   end
 end
 
@@ -77,6 +108,25 @@ class TestClasslistEach < Minitest::Test
       result << token
     end
     assert_equal(["foo", "bar", "baz"], result)
+  end
+end
+
+class TestClasslistEquality < Minitest::Test
+  def test_equal_to_itself
+    classlist = Classlist.new("foo bar")
+    assert_equal(classlist, classlist)
+  end
+
+  def test_equal_to_another_classlist_with_same_tokens
+    one = Classlist.new("foo bar")
+    other = Classlist.new("foo bar")
+    assert_equal(one, other)
+  end
+
+  def test_not_equal_to_another_classlist_with_same_tokens_in_different_order
+    one = Classlist.new("foo bar")
+    other = Classlist.new("bar foo")
+    refute_equal(one, other)
   end
 end
 

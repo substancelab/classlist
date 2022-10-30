@@ -14,6 +14,17 @@ class Classlist
 
   attr_reader :entries
 
+  def +(other)
+    other = build_entries(other)
+    Classlist.new(entries + other.to_a)
+  end
+
+  def ==(other)
+    return false unless other.is_a?(self.class)
+
+    entries == other.entries
+  end
+
   # Adds the given tokens to the list, omitting any that are already present.
   def add(tokens)
     entries = build_entries(tokens)
@@ -118,6 +129,6 @@ class Classlist
       entries.split(" ")
     else
       raise Error, "Invalid entries: #{entries.inspect}"
-    end
+    end.uniq
   end
 end
