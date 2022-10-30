@@ -1,8 +1,6 @@
 # Classlist
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/classlist`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+Serverside manipulation of CSS class lists. Works especially well with Tailwind and View Components.
 
 ## Installation
 
@@ -21,6 +19,66 @@ Or install it yourself as:
     $ gem install classlist
 
 ## Usage
+
+Imagine having a component that outputs the following markup when you render it:
+
+```erb
+<%= render(CardComponent.new) %>
+```
+
+```html
+<div class="card float-left">...</div>
+```
+
+Now you're tasked with implementing a card with another background color. That's easy, you think, I'll just add an option that adds more classes to the component:
+
+```erb
+<%= render(CardComponent.new(:classes => "bg-grey")) %>
+<!-- card.html.erb -->
+<div class="card float-left <%= classes %>">
+```
+
+That works and all is well. But next day the task is to make a card that isn't floated left. You could remove `float-left` from the template and move it to all calls to render:
+
+```erb
+<%= render(CardComponent.new(:classes => "float-left bg-grey")) %>
+<!-- card.html.erb -->
+<div class="card <%= classes %>">
+```
+
+Depending on the number of classes and the number of render calls that could work. But how about if you were able to write
+
+```erb
+<%= render(CardComponent.new(:classes => Classlist::Remove.new("float-left"))) %>
+```
+
+With Classlist you can:
+
+```ruby
+# card_component.rb
+def classes
+  Classlist.new("card float-left") + @classes
+end
+```
+
+```erb
+<!-- card.html.erb -->
+<div class="<%= classes %>">
+```
+
+The resulting markup will be
+
+```html
+<div class="card">
+```
+
+because
+
+```ruby
+Classlist.new("card float-left") + Classlist::Remove.new("float-left") == Classlist.new("card")
+```
+
+### Basic usage
 
 ```ruby
 # Create a new classlist - these are equivalent:
