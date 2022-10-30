@@ -60,6 +60,11 @@ class TestClasslistInitialization < Minitest::Test
     assert_instance_of(Classlist, result)
     assert_equal ["this"], result.entries
   end
+
+  def test_ignore_repeated_tokens
+    result = Classlist.new("foo foo foo")
+    assert_equal ["foo"], result.entries
+  end
 end
 
 class TestClasslistAdd < Minitest::Test

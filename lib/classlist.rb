@@ -129,6 +129,6 @@ class Classlist
       entries.split(" ")
     else
       raise Error, "Invalid entries: #{entries.inspect}"
-    end
+    end.uniq
   end
 end
