@@ -17,6 +17,12 @@ class TestClasslistAddition < Minitest::Test
     assert_equal(["foo", "bar"], result.to_a)
   end
 
+  def test_adding_a_classlist_returns_the_classlist_entries_added_to_entries
+    classlist = Classlist.new
+    result = classlist + Classlist.new(["foo", "bar"])
+    assert_equal(["foo", "bar"], result.to_a)
+  end
+
   def test_does_not_change_the_original_classlist
     classlist = Classlist.new([])
     _result = classlist + ["foo", "bar"]
