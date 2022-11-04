@@ -9,4 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Everything :)
+-
+
+## [1.0.0]
+
+### Added
+
+- Classlist::Reset that replaces all entries when merged
+- Classlist::Remove that removes entries when merged
+- DOMTokenList compatible Classlist class.
