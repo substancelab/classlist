@@ -7,7 +7,7 @@ require "classlist/remove"
 class TestClasslistRemove < Minitest::Test
   def test_inherits_from_classlist
     classlist = Classlist::Remove.new("foo")
-    assert_kind_of(Classlist, classlist)
+    assert_kind_of(Classlist::Operation, classlist)
   end
 end
 

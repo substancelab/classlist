@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require "classlist"
+require "classlist/operation"
 
-# Classlist::Reset is a classlist that removes all tokens from the original
+# Classlist::Reset is an operation that removes all tokens from the original
 # classlist when merged.
-class Classlist::Reset < Classlist
+class Classlist::Reset < Classlist::Operation
   def merge(original)
     original.entries.replace(entries)
   end
