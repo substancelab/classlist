@@ -69,4 +69,10 @@ class TestClasslistOperation < Minitest::Test
     base.add_operation(Classlist::Remove.new("not this"))
     assert_equal(["foo", "bar"], base.to_a)
   end
+
+  def test_adding_another_operation_as_manual_operation
+    base = Classlist::Add.new("foo bar")
+    base.add_operation(Classlist::Remove.new("bar"))
+    assert_equal([Classlist::Remove.new("bar")], base.operations)
+  end
 end
