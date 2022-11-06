@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Support for chains of operations longer than the most simple cases.
 - Introduce Classlist::Operation as a common super class for Classlist::Add, Classlist::Remove, Classlist::Reset.
 - Classlist::Add that adds all entries when merged
 
