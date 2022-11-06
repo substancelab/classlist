@@ -14,5 +14,7 @@ class Classlist::Add < Classlist::Operation
     entries.each do |entry|
       original.add(entry)
     end
+
+    super
   end
 end

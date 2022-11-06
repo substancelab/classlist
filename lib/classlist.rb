@@ -32,7 +32,7 @@ class Classlist
   def ==(other)
     return false unless other.is_a?(self.class)
 
-    resolve_operations
+    resolve_operations(self)
     other.resolve_operations
 
     @entries == other.entries
@@ -103,14 +103,14 @@ class Classlist
     true
   end
 
-  def resolve_operations
+  def resolve_operations(original_classlist = self)
     operations.each do |operation|
-      operation.resolve(self)
+      operation.resolve(original_classlist)
     end
   end
 
   def to_a
-    resolve_operations
+    resolve_operations(self)
     @entries
   end
 
