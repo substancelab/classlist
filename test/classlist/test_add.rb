@@ -7,7 +7,7 @@ require "classlist/add"
 class TestClasslistAdd < Minitest::Test
   def test_inherits_from_classlist
     classlist = Classlist::Add.new("foo")
-    assert_kind_of(Classlist, classlist)
+    assert_kind_of(Classlist::Operation, classlist)
   end
 end
 
