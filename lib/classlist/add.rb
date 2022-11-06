@@ -8,4 +8,11 @@ class Classlist::Add < Classlist::Operation
   def merge(original)
     original.entries + entries
   end
+
+  # resolve changes the original classlist
+  def resolve(original)
+    entries.each do |entry|
+      original.add(entry)
+    end
+  end
 end

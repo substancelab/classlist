@@ -18,6 +18,12 @@ class TestClasslistOperation < Minitest::Test
     assert_equal(["that"], base.to_a)
   end
 
+  def test_reset_as_manual_operations
+    base = Classlist.new("this that")
+    base.add_operation(Classlist::Reset.new("something else"))
+    assert_equal(["something", "else"], base.to_a)
+  end
+
   def test_remove_then_add_as_manual_operations
     base = Classlist.new("notthis")
     base.add_operation(Classlist::Remove.new("notthis"))

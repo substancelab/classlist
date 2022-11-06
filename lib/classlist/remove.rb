@@ -8,4 +8,11 @@ class Classlist::Remove < Classlist::Operation
   def merge(original)
     original.entries - entries
   end
+
+  # #resolve changes the original classlist
+  def resolve(original)
+    entries.each do |entry|
+      original.remove(entry)
+    end
+  end
 end

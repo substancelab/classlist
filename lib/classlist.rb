@@ -97,7 +97,11 @@ class Classlist
   end
 
   def to_a
-    entries
+    operations.each do |operation|
+      operation.resolve(self)
+    end
+
+    @entries
   end
 
   def to_s
