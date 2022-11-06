@@ -105,7 +105,7 @@ class Classlist
   end
 
   def to_s
-    entries.join(" ")
+    to_a.join(" ")
   end
   alias_method :value, :to_s
 
