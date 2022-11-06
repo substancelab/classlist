@@ -16,19 +16,26 @@ class Classlist
 
   # Returns the Classlist resulting from adding other to this classlist.
   def +(other)
-    result = if other.is_a?(Classlist)
-      other.merge(self)
+    case other
+    when Classlist::Operation
+      add_operation(other)
+      self
+    when Classlist
+      result = other.merge(self)
+      Classlist.new(result)
     else
-      entries + build_entries(other)
+      result = entries + build_entries(other)
+      Classlist.new(result)
     end
-
-    Classlist.new(result)
   end
 
   def ==(other)
     return false unless other.is_a?(self.class)
 
-    entries == other.entries
+    resolve_operations(self)
+    other.resolve_operations
+
+    @entries == other.entries
   end
 
   # Adds the given tokens to the list, omitting any that are already present.
@@ -96,11 +103,14 @@ class Classlist
     true
   end
 
-  def to_a
+  def resolve_operations(original_classlist = self)
     operations.each do |operation|
-      operation.resolve(self)
+      operation.resolve(original_classlist)
     end
+  end
 
+  def to_a
+    resolve_operations(self)
     @entries
   end
 

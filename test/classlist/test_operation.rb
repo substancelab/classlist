@@ -69,4 +69,36 @@ class TestClasslistOperation < Minitest::Test
     base.add_operation(Classlist::Remove.new("not this"))
     assert_equal(["foo", "bar"], base.to_a)
   end
+
+  def test_adding_another_operation
+    base = Classlist::Add.new("foo bar")
+    result = base + Classlist::Remove.new("bar")
+    assert_equal([Classlist::Remove.new("bar")], result.operations)
+  end
+
+  def test_adding_another_operation_as_manual_operation
+    base = Classlist::Add.new("foo bar")
+    base.add_operation(Classlist::Remove.new("bar"))
+    assert_equal([Classlist::Remove.new("bar")], base.operations)
+  end
+
+  def test_storing_operations_in_a_variable
+    change = Classlist::Remove.new("notthis") + Classlist::Add.new("this")
+    assert_instance_of(Classlist::Remove, change)
+
+    base = Classlist.new("notthis")
+    result = base + change
+
+    assert_equal(["this"], result.to_a)
+  end
+
+  def test_all_the_operations
+    result = Classlist.new("start") +
+      Classlist::Reset.new("with") +
+      Classlist::Remove.new("start") +
+      Classlist::Add.new("end with") +
+      Classlist::Add.new("this")
+
+    assert_equal(["with", "end", "this"], result.to_a)
+  end
 end

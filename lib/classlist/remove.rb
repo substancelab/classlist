@@ -14,5 +14,7 @@ class Classlist::Remove < Classlist::Operation
     entries.each do |entry|
       original.remove(entry)
     end
+
+    super
   end
 end

@@ -12,5 +12,7 @@ class Classlist::Reset < Classlist::Operation
   # #resolve changes the original classlist
   def resolve(original)
     original.entries.replace(entries)
+
+    super
   end
 end
