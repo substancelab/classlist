@@ -12,7 +12,7 @@ class Classlist
   extend Forwardable
   def_delegators :@entries, :each
 
-  attr_reader :entries
+  attr_reader :entries, :operations
 
   # Returns the Classlist resulting from adding other to this classlist.
   def +(other)
@@ -39,6 +39,10 @@ class Classlist
     end
   end
 
+  def add_operation(other)
+    @operations << other
+  end
+
   def include?(token)
     entries.include?(token)
   end
@@ -46,6 +50,7 @@ class Classlist
 
   def initialize(entries = [])
     @entries = build_entries(entries)
+    @operations = []
   end
 
   # Returns the item in the list by its index, or null if the index is greater
