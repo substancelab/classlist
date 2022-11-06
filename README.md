@@ -8,6 +8,8 @@ Add this line to your application's Gemfile:
 
 ```ruby
 gem 'classlist'
+# or if you don't want to manually require stuff:
+gem 'classlist', require: 'classlist/all'
 ```
 
 And then execute:
