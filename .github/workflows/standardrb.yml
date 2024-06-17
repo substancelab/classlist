@@ -3,11 +3,13 @@ name: StandardRB
 on: [push]
 
 jobs:
-  build:
+  standardrb:
+    name: StandardRB
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
-    - name: StandardRB Linter
-      uses: andrewmcodes/standardrb-action@v1.0.0
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+          ruby-version: 3.3
+      - run: bundle exec standardrb --format github --parallel
