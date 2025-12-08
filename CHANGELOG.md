@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - LICENSE file.
 - Code of Conduct.
-- Add support for Ruby 3.2 and 3.3 (no changes).
+- Add support for Ruby 3.2, 3.3, 3.4 (no changes).
 
 ### Fixed
 
