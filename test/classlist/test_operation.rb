@@ -93,6 +93,22 @@ class TestClasslistOperation < Minitest::Test
     assert_equal(["this"], result.to_a)
   end
 
+  def test_adding_after_removing
+    base = Classlist.new("foo")
+    removal = Classlist::Remove.new("foo")
+    addition = Classlist::Add.new("addition")
+    result = base + removal + addition
+    assert_equal(["addition"], result.to_a)
+  end
+
+  def test_adding_a_classlist_instance_assumes_add
+    base = Classlist.new("foo")
+    removal = Classlist::Remove.new("foo")
+    addition = Classlist.new("addition")
+    result = base + removal + addition
+    assert_equal(["addition"], result.to_a)
+  end
+
   def test_all_the_operations
     result = Classlist.new("start") +
       Classlist::Reset.new("with") +
