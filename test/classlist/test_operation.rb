@@ -4,6 +4,7 @@ require "test_helper"
 
 require "classlist/add"
 require "classlist/remove"
+require "classlist/reset"
 
 class TestClasslistOperation < Minitest::Test
   def test_add
