@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Code of Conduct.
 - Add support for Ruby 3.2 and 3.3 (no changes).
 
+### Fixed
+
+- Adding a raw `Classlist` to a set of `Classlist::Operation`s would merge the `Classlist` into the last operation, instead of treating the `Classlist` as an implicit `Classlist::Add` operation (which it should be).
+
 ## [1.1.0] - 2022-11-07
 
 ### Added

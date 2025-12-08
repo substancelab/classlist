@@ -10,12 +10,18 @@ class Classlist
   class Error < StandardError; end
 
   extend Forwardable
+
   def_delegators :@entries, :each
 
   attr_reader :entries, :operations
 
   # Returns the Classlist resulting from adding other to this classlist.
   def +(other)
+    # When adding a basic Classlist to an existing list, assume an Add operation
+    if other.is_a?(Classlist) && !other.is_a?(Classlist::Operation)
+      other = Classlist::Add.new(other.entries.dup)
+    end
+
     case other
     when Classlist::Operation
       add_operation(other)
