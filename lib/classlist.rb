@@ -113,6 +113,8 @@ class Classlist
     operations.each do |operation|
       operation.resolve(original_classlist)
     end
+
+    operations.clear
   end
 
   def to_a
