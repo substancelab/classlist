@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "forwardable"
+require "set" # standard:disable Lint/RedundantRequireStatement -- needed on Ruby < 3.2
 
 require_relative "classlist/version"
 
@@ -46,9 +47,11 @@ class Classlist
 
   # Adds the given tokens to the list, omitting any that are already present.
   def add(tokens)
-    entries = build_entries(tokens)
-    entries.each do |entry|
-      self.entries.push(entry) unless self.entries.include?(entry)
+    build_entries(tokens).each do |entry|
+      next if @entries_set.include?(entry)
+
+      entries.push(entry)
+      @entries_set << entry
     end
   end
 
@@ -57,12 +60,13 @@ class Classlist
   end
 
   def include?(token)
-    entries.include?(token)
+    @entries_set.include?(token)
   end
   alias_method :contains, :include?
 
   def initialize(entries = [])
     @entries = build_entries(entries)
+    @entries_set = @entries.to_set
     @operations = []
   end
 
@@ -87,10 +91,18 @@ class Classlist
   # Removes the specified tokens from the classlist, ignoring any that are not
   # present.
   def remove(tokens)
-    entries = build_entries(tokens)
-    entries.each do |entry|
-      self.entries.delete(entry)
+    build_entries(tokens).each do |entry|
+      next unless @entries_set.delete?(entry)
+
+      entries.delete(entry)
     end
+  end
+
+  # Replaces all entries in the classlist with the given tokens.
+  def reset(tokens)
+    @entries = build_entries(tokens)
+    @entries_set = @entries.to_set
+    @entries
   end
 
   # Replaces an existing token with a new token. If the first token doesn't
@@ -104,6 +116,8 @@ class Classlist
     else
       index = entries.index(old_token)
       entries[index] = new_token
+      @entries_set.delete(old_token)
+      @entries_set << new_token
     end
 
     true
@@ -136,7 +150,7 @@ class Classlist
   def toggle(token, force = nil)
     raise ArgumentError, "The token can not contain whitespace." if token.to_s.include?(" ")
 
-    if entries.include?(token)
+    if include?(token)
       remove(token) unless force == true
       result = false
     else
