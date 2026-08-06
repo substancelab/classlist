@@ -6,12 +6,12 @@ require "classlist/operation"
 # classlist when merged.
 class Classlist::Reset < Classlist::Operation
   def merge(original)
-    original.entries.replace(entries)
+    original.reset(entries)
   end
 
   # #resolve changes the original classlist
   def resolve(original)
-    original.entries.replace(entries)
+    original.reset(entries)
 
     super
   end
