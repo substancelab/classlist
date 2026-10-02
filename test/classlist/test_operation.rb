@@ -118,4 +118,34 @@ class TestClasslistOperation < Minitest::Test
 
     assert_equal(["with", "end", "this"], result.to_a)
   end
+
+  def test_adding_a_string_keeps_pending_operations
+    base = Classlist.new("foo") + Classlist::Add.new("bar")
+    result = base + "baz"
+    assert_equal(["foo", "bar", "baz"], result.to_a)
+  end
+
+  def test_adding_an_array_keeps_pending_operations
+    base = Classlist.new("foo") + Classlist::Add.new("bar")
+    result = base + ["baz"]
+    assert_equal(["foo", "bar", "baz"], result.to_a)
+  end
+
+  def test_adding_a_string_applies_pending_operations_first
+    base = Classlist.new("foo bar") + Classlist::Remove.new("bar")
+    result = base + "bar"
+    assert_equal(["foo", "bar"], result.to_a)
+  end
+
+  def test_adding_a_string_after_reset_keeps_the_reset
+    base = Classlist.new("foo") + Classlist::Reset.new("bar")
+    result = base + "baz"
+    assert_equal(["bar", "baz"], result.to_a)
+  end
+
+  def test_adding_a_string_does_not_change_the_original_classlist
+    base = Classlist.new("foo") + Classlist::Add.new("bar")
+    _result = base + "baz"
+    assert_equal(["foo", "bar"], base.to_a)
+  end
 end

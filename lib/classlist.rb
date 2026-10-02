@@ -30,8 +30,13 @@ class Classlist
       result = other.merge(self)
       Classlist.new(result)
     else
-      result = entries + build_entries(other)
-      Classlist.new(result)
+      # Carry over pending operations so they are not lost, without resolving
+      # them on (and thereby changing) this classlist.
+      result = Classlist.new(entries.dup)
+      operations.each { |operation| result.add_operation(operation) }
+      result.resolve_operations
+      result.add(other)
+      result
     end
   end
 
