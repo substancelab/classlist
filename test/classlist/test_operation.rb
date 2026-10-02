@@ -148,4 +148,37 @@ class TestClasslistOperation < Minitest::Test
     _result = base + "baz"
     assert_equal(["foo", "bar"], base.to_a)
   end
+
+  def test_adding_a_string_keeps_composed_operations
+    change = Classlist::Remove.new("foo") + Classlist::Add.new("bar")
+    base = Classlist.new("foo") + change
+    result = base + "baz"
+    assert_equal(["bar", "baz"], result.to_a)
+  end
+
+  def test_adding_a_string_does_not_change_composed_operations_on_the_original
+    change = Classlist::Remove.new("foo") + Classlist::Add.new("bar")
+    base = Classlist.new("foo") + change
+    _result = base + "baz"
+    assert_equal(["bar"], base.to_a)
+  end
+
+  def test_adding_a_string_does_not_change_operations_shared_with_other_classlists
+    change = Classlist::Remove.new("foo") + Classlist::Add.new("bar")
+    first = Classlist.new("foo") + change
+    second = Classlist.new("foo") + change
+    _result = first + "baz"
+    assert_equal(["bar"], second.to_a)
+  end
+
+  def test_adding_a_string_leaves_operations_pending_on_the_original
+    change = Classlist::Remove.new("foo") + Classlist::Add.new("bar")
+    base = Classlist.new("foo") + change
+    _result = base + "baz"
+    assert_equal(["foo"], base.entries)
+    assert_equal(1, base.operations.length)
+    assert_same(change, base.operations.first)
+    assert_equal(1, change.operations.length)
+    assert_equal(["bar"], change.operations.first.entries)
+  end
 end

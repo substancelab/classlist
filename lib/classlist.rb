@@ -30,10 +30,10 @@ class Classlist
       result = other.merge(self)
       Classlist.new(result)
     else
-      # Carry over pending operations so they are not lost, without resolving
-      # them on (and thereby changing) this classlist.
+      # Resolve pending operations on a copy, so they are not lost and this
+      # classlist (including any shared operations) is left unchanged.
       result = Classlist.new(entries.dup)
-      operations.each { |operation| result.add_operation(operation) }
+      operations.each { |operation| result.add_operation(operation.dup) }
       result.resolve_operations
       result.add(other)
       result
@@ -69,6 +69,14 @@ class Classlist
   def initialize(entries = [])
     @entries = build_entries(entries)
     @operations = []
+  end
+
+  # Copies entries and the full tree of pending operations, so resolving
+  # operations on the copy doesn't change the original.
+  def initialize_copy(source)
+    super
+    @entries = source.entries.dup
+    @operations = source.operations.map(&:dup)
   end
 
   # Returns the item in the list by its index, or null if the index is greater
