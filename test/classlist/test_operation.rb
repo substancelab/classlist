@@ -118,4 +118,77 @@ class TestClasslistOperation < Minitest::Test
 
     assert_equal(["with", "end", "this"], result.to_a)
   end
+
+  def test_adding_a_string_keeps_pending_operations
+    base = Classlist.new("foo") + Classlist::Add.new("bar")
+    result = base + "baz"
+    assert_equal(["foo", "bar", "baz"], result.to_a)
+  end
+
+  def test_adding_an_array_keeps_pending_operations
+    base = Classlist.new("foo") + Classlist::Add.new("bar")
+    result = base + ["baz"]
+    assert_equal(["foo", "bar", "baz"], result.to_a)
+  end
+
+  def test_adding_a_string_applies_pending_operations_first
+    base = Classlist.new("foo bar") + Classlist::Remove.new("bar")
+    result = base + "bar"
+    assert_equal(["foo", "bar"], result.to_a)
+  end
+
+  def test_adding_a_string_after_reset_keeps_the_reset
+    base = Classlist.new("foo") + Classlist::Reset.new("bar")
+    result = base + "baz"
+    assert_equal(["bar", "baz"], result.to_a)
+  end
+
+  def test_adding_a_string_does_not_change_the_original_classlist
+    base = Classlist.new("foo") + Classlist::Add.new("bar")
+    _result = base + "baz"
+    assert_equal(["foo", "bar"], base.to_a)
+  end
+
+  def test_adding_a_string_keeps_composed_operations
+    change = Classlist::Remove.new("foo") + Classlist::Add.new("bar")
+    base = Classlist.new("foo") + change
+    result = base + "baz"
+    assert_equal(["bar", "baz"], result.to_a)
+  end
+
+  def test_adding_a_string_does_not_change_composed_operations_on_the_original
+    change = Classlist::Remove.new("foo") + Classlist::Add.new("bar")
+    base = Classlist.new("foo") + change
+    _result = base + "baz"
+    assert_equal(["bar"], base.to_a)
+  end
+
+  def test_adding_a_string_does_not_change_operations_shared_with_other_classlists
+    change = Classlist::Remove.new("foo") + Classlist::Add.new("bar")
+    first = Classlist.new("foo") + change
+    second = Classlist.new("foo") + change
+    _result = first + "baz"
+    assert_equal(["bar"], second.to_a)
+  end
+
+  def test_adding_a_string_resolves_shared_nested_operations_like_the_original
+    shared = Classlist::Add.new("a") + Classlist::Reset.new("b")
+    base = Classlist.new +
+      (Classlist::Add.new("x") + shared) +
+      (Classlist::Remove.new("b") + shared)
+    result = base + "z"
+    assert_equal(["a", "z"], result.to_a)
+    assert_equal(["a"], base.to_a)
+  end
+
+  def test_adding_a_string_leaves_operations_pending_on_the_original
+    change = Classlist::Remove.new("foo") + Classlist::Add.new("bar")
+    base = Classlist.new("foo") + change
+    _result = base + "baz"
+    assert_equal(["foo"], base.entries)
+    assert_equal(1, base.operations.length)
+    assert_same(change, base.operations.first)
+    assert_equal(1, change.operations.length)
+    assert_equal(["bar"], change.operations.first.entries)
+  end
 end
