@@ -171,6 +171,16 @@ class TestClasslistOperation < Minitest::Test
     assert_equal(["bar"], second.to_a)
   end
 
+  def test_adding_a_string_resolves_shared_nested_operations_like_the_original
+    shared = Classlist::Add.new("a") + Classlist::Reset.new("b")
+    base = Classlist.new +
+      (Classlist::Add.new("x") + shared) +
+      (Classlist::Remove.new("b") + shared)
+    result = base + "z"
+    assert_equal(["a", "z"], result.to_a)
+    assert_equal(["a"], base.to_a)
+  end
+
   def test_adding_a_string_leaves_operations_pending_on_the_original
     change = Classlist::Remove.new("foo") + Classlist::Add.new("bar")
     base = Classlist.new("foo") + change
