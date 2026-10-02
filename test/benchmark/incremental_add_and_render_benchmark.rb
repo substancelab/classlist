@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "benchmark"
+
 require_relative "benchmark_helper"
 
 # Regression guard for https://github.com/substancelab/classlist/issues -
