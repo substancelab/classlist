@@ -30,8 +30,13 @@ class Classlist
       result = other.merge(self)
       Classlist.new(result)
     else
-      result = entries + build_entries(other)
-      Classlist.new(result)
+      # Resolve pending operations on a copy, so they are not lost and this
+      # classlist (including any shared operations) is left unchanged.
+      result = Classlist.new
+      result.copy_from(self, {}.compare_by_identity)
+      result.resolve_operations
+      result.add(other)
+      result
     end
   end
 
@@ -148,6 +153,27 @@ class Classlist
       result
     else
       force
+    end
+  end
+
+  protected
+
+  # Replaces entries and pending operations with copies of those in source, so
+  # resolving operations on this classlist doesn't change source.
+  #
+  # memo maps already copied operations to their copies by identity. An
+  # operation reachable through several paths is copied only once, so the copy
+  # resolves exactly like the original does.
+  def copy_from(source, memo)
+    @entries = source.entries.dup
+    @operations = source.operations.map { |operation| operation.deep_copy(memo) }
+  end
+
+  def deep_copy(memo)
+    memo.fetch(self) do
+      copy = memo[self] = dup
+      copy.copy_from(self, memo)
+      copy
     end
   end
 

@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Adding a String or Array to a Classlist with pending operations no longer drops those operations.
+
 ## 1.1.2 - 2026-08-06
 
 ### Fixed
