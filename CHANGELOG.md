@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Operations are applied as soon as they are added to a Classlist instead of being kept pending until the Classlist is rendered.
 - Adding to a Classlist or an Operation with `+` returns a new object and never changes either operand.
+- `add_operation` is an alias for `+`, so it returns a new object instead of changing the classlist or operation it is called on.
+- Adding a plain Classlist, String or Array to a Classlist is the same as adding a `Classlist::Add` with those tokens.
 - An operation shared between several classlists, or nested more than once, now gives the same result every time it is applied. Previously its nested operations were only applied the first time.
 - Adding, removing, toggling and checking for a token take constant time regardless of the number of tokens in the list.
 - Equality requires both sides to be of the same class, so a Classlist is never equal to an Operation.
@@ -18,7 +20,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 - `Classlist#operations` and `Classlist#resolve_operations`, since a Classlist no longer has pending operations. `Classlist::Operation#operations` remains.
-- `Classlist#add_operation` and `Classlist::Operation#add_operation`. Use `+` to apply or combine operations.
 
 ### Fixed
 

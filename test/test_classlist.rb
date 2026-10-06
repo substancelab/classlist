@@ -3,6 +3,7 @@
 require "test_helper"
 
 require "classlist"
+require "classlist/add"
 
 class TestClasslistAddition < Minitest::Test
   def test_adding_a_string_returns_the_token_added_to_entries
@@ -27,6 +28,28 @@ class TestClasslistAddition < Minitest::Test
     classlist = Classlist.new([])
     _result = classlist + ["foo", "bar"]
     assert_equal([], classlist.to_a)
+  end
+
+  def test_adding_a_string_is_the_same_as_adding_an_add_operation
+    classlist = Classlist.new("foo bar")
+    assert_equal(classlist + Classlist::Add.new("bar baz"), classlist + "bar baz")
+  end
+
+  def test_adding_an_array_is_the_same_as_adding_an_add_operation
+    classlist = Classlist.new("foo bar")
+    assert_equal(classlist + Classlist::Add.new(["bar", "baz"]), classlist + ["bar", "baz"])
+  end
+
+  def test_adding_a_classlist_is_the_same_as_adding_an_add_operation
+    classlist = Classlist.new("foo bar")
+    assert_equal(classlist + Classlist::Add.new("bar baz"), classlist + Classlist.new("bar baz"))
+  end
+
+  def test_add_operation_is_the_same_as_adding
+    classlist = Classlist.new("foo")
+    result = classlist.add_operation(Classlist::Add.new("bar"))
+    assert_equal(Classlist.new("foo bar"), result)
+    assert_equal(["foo"], classlist.to_a)
   end
 end
 

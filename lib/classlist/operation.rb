@@ -17,9 +17,10 @@ class Classlist::Operation < Classlist
   # plain Classlist, String or Array is added as tokens to add.
   def +(other)
     result = dup
-    result.add_operation(other)
+    result.append_operation(other)
     result
   end
+  alias_method :add_operation, :+
 
   # Changes target by applying this operation and the operations following it.
   def apply(target)
@@ -46,7 +47,7 @@ class Classlist::Operation < Classlist
   protected
 
   # Adds other to the operations applied after this one.
-  def add_operation(other)
+  def append_operation(other)
     other = Classlist.new(other) unless other.is_a?(Classlist)
     @operations << other
   end

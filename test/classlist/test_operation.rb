@@ -45,6 +45,13 @@ class TestClasslistOperation < Minitest::Test
     assert_equal([Classlist::Remove.new("bar")], result.operations)
   end
 
+  def test_add_operation_is_the_same_as_adding
+    base = Classlist::Add.new("foo bar")
+    result = base.add_operation(Classlist::Remove.new("bar"))
+    assert_equal(base + Classlist::Remove.new("bar"), result)
+    assert_empty(base.operations)
+  end
+
   def test_storing_operations_in_a_variable
     change = Classlist::Remove.new("notthis") + Classlist::Add.new("this")
     assert_instance_of(Classlist::Remove, change)

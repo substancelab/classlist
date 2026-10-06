@@ -16,9 +16,9 @@ class Classlist
   # Returns a new Classlist resulting from adding other to this classlist.
   # Neither this classlist nor other are changed.
   #
-  # Adding a Classlist::Operation applies the operation, adding a plain
-  # Classlist adds its tokens, and adding a String or Array adds the tokens in
-  # it.
+  # Adding a Classlist::Operation applies the operation. Adding a plain
+  # Classlist, String or Array is the same as adding a Classlist::Add with its
+  # tokens.
   def +(other)
     result = dup
     if other.is_a?(Classlist)
@@ -28,6 +28,7 @@ class Classlist
     end
     result
   end
+  alias_method :add_operation, :+
 
   def ==(other)
     other.instance_of?(self.class) && to_a == other.to_a
