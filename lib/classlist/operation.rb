@@ -9,6 +9,10 @@ require "classlist"
 # original unchanged, so an operation can be shared and gives the same result
 # every time it is applied.
 class Classlist::Operation < Classlist
+  def ==(other)
+    super && operations == other.operations
+  end
+
   # Returns a new operation that applies this operation followed by other. A
   # plain Classlist, String or Array is added as tokens to add.
   def +(other)

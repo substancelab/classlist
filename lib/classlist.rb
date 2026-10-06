@@ -9,9 +9,6 @@ class Classlist
 
   class Error < StandardError; end
 
-  NO_OPERATIONS = [].freeze
-  private_constant :NO_OPERATIONS
-
   extend Forwardable
 
   def_delegators :to_a, :each
@@ -33,9 +30,7 @@ class Classlist
   end
 
   def ==(other)
-    other.instance_of?(self.class) &&
-      to_a == other.to_a &&
-      operations == other.operations
+    other.instance_of?(self.class) && to_a == other.to_a
   end
 
   # Adds the given tokens to the list, omitting any that are already present.
@@ -88,12 +83,6 @@ class Classlist
     (classlist.entries + entries).uniq
   end
 
-  # Operations are resolved as soon as they are added to a plain Classlist, so
-  # it never has any pending.
-  def operations
-    NO_OPERATIONS
-  end
-
   # Removes the specified tokens from the classlist, ignoring any that are not
   # present.
   def remove(tokens)
@@ -115,11 +104,6 @@ class Classlist
     end
 
     true
-  end
-
-  # Operations are resolved as soon as they are added, so there is nothing left
-  # to resolve. Kept for backwards compatibility.
-  def resolve_operations(_original_classlist = self)
   end
 
   def to_a
