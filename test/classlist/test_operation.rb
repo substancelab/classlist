@@ -13,34 +13,16 @@ class TestClasslistOperation < Minitest::Test
     assert_equal(["foo", "bar"], result.to_a)
   end
 
-  def test_add_as_manual_operations
-    base = Classlist.new("foo")
-    base.add_operation(Classlist::Add.new("bar"))
-    assert_equal(["foo", "bar"], base.to_a)
-  end
-
   def test_remove
     base = Classlist.new("this that")
     result = base + Classlist::Remove.new("this")
     assert_equal(["that"], result.to_a)
   end
 
-  def test_remove_as_manual_operations
-    base = Classlist.new("this that")
-    base.add_operation(Classlist::Remove.new("this"))
-    assert_equal(["that"], base.to_a)
-  end
-
   def test_reset
     base = Classlist.new("this that")
     result = base + Classlist::Reset.new("something else")
     assert_equal(["something", "else"], result.to_a)
-  end
-
-  def test_reset_as_manual_operations
-    base = Classlist.new("this that")
-    base.add_operation(Classlist::Reset.new("something else"))
-    assert_equal(["something", "else"], base.to_a)
   end
 
   def test_remove_then_add
@@ -50,25 +32,11 @@ class TestClasslistOperation < Minitest::Test
     assert_equal(["this"], result.to_a)
   end
 
-  def test_remove_then_add_as_manual_operations
-    base = Classlist.new("notthis")
-    base.add_operation(Classlist::Remove.new("notthis"))
-    base.add_operation(Classlist::Add.new("this"))
-    assert_equal(["this"], base.to_a)
-  end
-
   def test_add_then_remove
     result = Classlist.new("foo bar")
     result += Classlist::Add.new("foo bar")
     result += Classlist::Remove.new("not this")
     assert_equal(["foo", "bar"], result.to_a)
-  end
-
-  def test_add_then_remove_as_manual_operations
-    base = Classlist.new("foo bar")
-    base.add_operation(Classlist::Add.new("foo bar"))
-    base.add_operation(Classlist::Remove.new("not this"))
-    assert_equal(["foo", "bar"], base.to_a)
   end
 
   def test_adding_another_operation
@@ -77,10 +45,11 @@ class TestClasslistOperation < Minitest::Test
     assert_equal([Classlist::Remove.new("bar")], result.operations)
   end
 
-  def test_adding_another_operation_as_manual_operation
+  def test_add_operation_is_the_same_as_adding
     base = Classlist::Add.new("foo bar")
-    base.add_operation(Classlist::Remove.new("bar"))
-    assert_equal([Classlist::Remove.new("bar")], base.operations)
+    result = base.add_operation(Classlist::Remove.new("bar"))
+    assert_equal(base + Classlist::Remove.new("bar"), result)
+    assert_empty(base.operations)
   end
 
   def test_storing_operations_in_a_variable
@@ -171,24 +140,68 @@ class TestClasslistOperation < Minitest::Test
     assert_equal(["bar"], second.to_a)
   end
 
-  def test_adding_a_string_resolves_shared_nested_operations_like_the_original
+  def test_adding_a_string_resolves_shared_nested_operations_consistently
     shared = Classlist::Add.new("a") + Classlist::Reset.new("b")
     base = Classlist.new +
       (Classlist::Add.new("x") + shared) +
       (Classlist::Remove.new("b") + shared)
     result = base + "z"
-    assert_equal(["a", "z"], result.to_a)
-    assert_equal(["a"], base.to_a)
+    assert_equal(["b", "z"], result.to_a)
+    assert_equal(["b"], base.to_a)
   end
 
-  def test_adding_a_string_leaves_operations_pending_on_the_original
+  def test_adding_a_string_does_not_change_the_original_or_the_operation
     change = Classlist::Remove.new("foo") + Classlist::Add.new("bar")
     base = Classlist.new("foo") + change
     _result = base + "baz"
-    assert_equal(["foo"], base.entries)
-    assert_equal(1, base.operations.length)
-    assert_same(change, base.operations.first)
-    assert_equal(1, change.operations.length)
-    assert_equal(["bar"], change.operations.first.entries)
+    assert_equal(["bar"], base.to_a)
+    assert_equal(["bar"], (Classlist.new("foo") + change).to_a)
+    assert_equal([Classlist::Add.new("bar")], change.operations)
+  end
+
+  def test_adding_an_operation_does_not_change_the_classlist
+    base = Classlist.new("foo")
+    _result = base + Classlist::Remove.new("foo")
+    assert_equal(["foo"], base.to_a)
+  end
+
+  def test_adding_operations_does_not_change_the_first_operation
+    removal = Classlist::Remove.new("foo")
+    _change = removal + Classlist::Add.new("bar")
+    assert_equal([], removal.operations)
+    assert_equal(["baz"], (Classlist.new("foo baz") + removal).to_a)
+  end
+
+  def test_a_shared_operation_gives_the_same_result_every_time
+    change = Classlist::Reset.new("a") + Classlist::Remove.new("a") + Classlist::Add.new("b")
+    first = Classlist.new("x") + change
+    second = Classlist.new("y") + change
+    assert_equal(["b"], first.to_a)
+    assert_equal(["b"], second.to_a)
+  end
+
+  def test_adding_a_string_to_an_operation_adds_the_tokens
+    change = Classlist::Remove.new("a") + "b"
+    result = Classlist.new("a c") + change
+    assert_equal(["c", "b"], result.to_a)
+  end
+
+  def test_a_plain_operation_changes_nothing
+    result = Classlist.new("a") + Classlist::Operation.new("b")
+    assert_equal(["a"], result.to_a)
+  end
+
+  def test_a_plain_operation_applies_the_operations_following_it
+    result = Classlist.new("a") + (Classlist::Operation.new("b") + Classlist::Add.new("c"))
+    assert_equal(["a", "c"], result.to_a)
+  end
+
+  def test_apply_is_not_public
+    refute_respond_to(Classlist::Add.new("a"), :apply)
+    refute_respond_to(Classlist.new("a"), :apply)
+  end
+
+  def test_resolve_is_removed
+    refute_respond_to(Classlist::Add.new("a"), :resolve)
   end
 end

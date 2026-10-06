@@ -3,6 +3,8 @@
 require "test_helper"
 
 require "classlist"
+require "classlist/add"
+require "classlist/reset"
 
 class TestClasslistAddition < Minitest::Test
   def test_adding_a_string_returns_the_token_added_to_entries
@@ -27,6 +29,28 @@ class TestClasslistAddition < Minitest::Test
     classlist = Classlist.new([])
     _result = classlist + ["foo", "bar"]
     assert_equal([], classlist.to_a)
+  end
+
+  def test_adding_a_string_is_the_same_as_adding_an_add_operation
+    classlist = Classlist.new("foo bar")
+    assert_equal(classlist + Classlist::Add.new("bar baz"), classlist + "bar baz")
+  end
+
+  def test_adding_an_array_is_the_same_as_adding_an_add_operation
+    classlist = Classlist.new("foo bar")
+    assert_equal(classlist + Classlist::Add.new(["bar", "baz"]), classlist + ["bar", "baz"])
+  end
+
+  def test_adding_a_classlist_is_the_same_as_adding_an_add_operation
+    classlist = Classlist.new("foo bar")
+    assert_equal(classlist + Classlist::Add.new("bar baz"), classlist + Classlist.new("bar baz"))
+  end
+
+  def test_add_operation_is_the_same_as_adding
+    classlist = Classlist.new("foo")
+    result = classlist.add_operation(Classlist::Add.new("bar"))
+    assert_equal(Classlist.new("foo bar"), result)
+    assert_equal(["foo"], classlist.to_a)
   end
 end
 
@@ -145,6 +169,41 @@ class TestClassListItem < Minitest::Test
     classlist = Classlist.new("foo bar")
     assert_nil(classlist.item(-1))
   end
+
+  def test_reflects_tokens_added_after_reading
+    classlist = Classlist.new("foo")
+    classlist.item(0)
+    classlist.add("bar")
+    assert_equal("bar", classlist.item(1))
+  end
+
+  def test_reflects_tokens_removed_after_reading
+    classlist = Classlist.new("foo bar")
+    classlist.item(0)
+    classlist.remove("foo")
+    assert_equal("bar", classlist.item(0))
+  end
+
+  def test_reflects_tokens_replaced_after_reading
+    classlist = Classlist.new("foo bar")
+    classlist.item(0)
+    classlist.replace("foo", "baz")
+    assert_equal("baz", classlist.item(0))
+  end
+
+  def test_reflects_tokens_reset_after_reading
+    classlist = Classlist.new("foo bar")
+    classlist.item(0)
+    result = classlist + Classlist::Reset.new("baz")
+    assert_equal("baz", result.item(0))
+    assert_equal("foo", classlist.item(0))
+  end
+
+  def test_is_not_affected_by_changing_the_array_from_to_a
+    classlist = Classlist.new("foo bar")
+    classlist.to_a.shift
+    assert_equal("foo", classlist.item(0))
+  end
 end
 
 class TestClasslistIncludes < Minitest::Test
@@ -198,6 +257,27 @@ class TestClasslistReplace < Minitest::Test
     classlist = Classlist.new("there can be only one")
     classlist.replace("there", "one")
     assert_equal(["can", "be", "only", "one"], classlist.to_a)
+  end
+
+  def test_it_does_nothing_when_replacing_a_token_with_itself
+    classlist = Classlist.new("first second")
+    assert(classlist.replace("first", "first"))
+    assert_equal(["first", "second"], classlist.to_a)
+  end
+
+  def test_raises_error_when_new_token_contains_whitespace
+    classlist = Classlist.new("class")
+    assert_raises(Classlist::ArgumentError) {
+      classlist.replace("class", "with space")
+    }
+    assert_equal(["class"], classlist.to_a)
+  end
+
+  def test_raises_error_when_old_token_contains_whitespace
+    classlist = Classlist.new("class")
+    assert_raises(Classlist::ArgumentError) {
+      classlist.replace("with\tspace", "other")
+    }
   end
 end
 
@@ -288,6 +368,13 @@ class TestClasslistToggle < Minitest::Test
     classlist = Classlist.new("class anotherclass")
     assert_raises(Classlist::ArgumentError) {
       classlist.toggle("with space")
+    }
+  end
+
+  def test_raises_error_when_token_contains_other_whitespace
+    classlist = Classlist.new("class anotherclass")
+    assert_raises(Classlist::ArgumentError) {
+      classlist.toggle("with\ttab")
     }
   end
 end
