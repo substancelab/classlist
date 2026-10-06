@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Adding a String or Array to a `Classlist::Remove` or `Classlist::Reset` now adds those tokens after the operation, instead of turning the whole thing into an addition.
+- Replacing a token with itself leaves the classlist unchanged instead of removing the token.
 
 ## 1.1.3 - 2026-10-06
 

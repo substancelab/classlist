@@ -91,6 +91,7 @@ class Classlist
   # the token list.
   def replace(old_token, new_token)
     return false unless include?(old_token)
+    return true if old_token == new_token
 
     if include?(new_token)
       remove(old_token)

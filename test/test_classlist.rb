@@ -199,6 +199,12 @@ class TestClasslistReplace < Minitest::Test
     classlist.replace("there", "one")
     assert_equal(["can", "be", "only", "one"], classlist.to_a)
   end
+
+  def test_it_does_nothing_when_replacing_a_token_with_itself
+    classlist = Classlist.new("first second")
+    assert(classlist.replace("first", "first"))
+    assert_equal(["first", "second"], classlist.to_a)
+  end
 end
 
 class TestClasslistRemove < Minitest::Test
