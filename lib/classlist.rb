@@ -40,11 +40,6 @@ class Classlist
     end
   end
 
-  # Applies the given operation to this classlist.
-  def add_operation(operation)
-    operation.apply(self)
-  end
-
   # Changes target by adding the tokens in this classlist to it. Adding a plain
   # Classlist to another acts as a Classlist::Add.
   def apply(target)

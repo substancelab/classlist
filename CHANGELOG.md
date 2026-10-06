@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 - `Classlist#operations` and `Classlist#resolve_operations`, since a Classlist no longer has pending operations. `Classlist::Operation#operations` remains.
+- `Classlist#add_operation` and `Classlist::Operation#add_operation`. Use `+` to apply or combine operations.
 
 ### Fixed
 

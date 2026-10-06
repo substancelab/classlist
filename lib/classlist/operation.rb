@@ -21,12 +21,6 @@ class Classlist::Operation < Classlist
     result
   end
 
-  # Adds other to the operations applied after this one.
-  def add_operation(other)
-    other = Classlist.new(other) unless other.is_a?(Classlist)
-    @operations << other
-  end
-
   # Changes target by applying this operation and the operations following it.
   def apply(target)
     apply_self(target)
@@ -48,6 +42,14 @@ class Classlist::Operation < Classlist
   end
 
   attr_reader :operations
+
+  protected
+
+  # Adds other to the operations applied after this one.
+  def add_operation(other)
+    other = Classlist.new(other) unless other.is_a?(Classlist)
+    @operations << other
+  end
 
   private
 
