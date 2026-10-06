@@ -1,17 +1,11 @@
 # frozen_string_literal: true
 
-require "forwardable"
-
 require_relative "classlist/version"
 
 class Classlist
   class ArgumentError < ::ArgumentError; end
 
   class Error < StandardError; end
-
-  extend Forwardable
-
-  def_delegators :to_a, :each
 
   # Returns a new Classlist resulting from adding other to this classlist.
   # Neither this classlist nor other are changed.
@@ -31,7 +25,7 @@ class Classlist
   alias_method :add_operation, :+
 
   def ==(other)
-    other.instance_of?(self.class) && to_a == other.to_a
+    other.instance_of?(self.class) && ordered_tokens == other.ordered_tokens
   end
 
   # Adds the given tokens to the list, omitting any that are already present.
@@ -39,6 +33,7 @@ class Classlist
     build_entries(tokens).each do |token|
       @tokens[token] = true
     end
+    @ordered_tokens = nil
   end
 
   # Changes target by adding the tokens in this classlist to it. Adding a plain
@@ -47,8 +42,12 @@ class Classlist
     target.add(to_a)
   end
 
+  def each(&block)
+    ordered_tokens.each(&block)
+  end
+
   def entries
-    @tokens.keys
+    ordered_tokens.dup
   end
 
   def include?(token)
@@ -66,7 +65,7 @@ class Classlist
   def item(index)
     return nil if index.negative?
 
-    entries[index]
+    ordered_tokens[index]
   end
 
   # An integer representing the number of objects stored in the object.
@@ -85,6 +84,7 @@ class Classlist
     build_entries(tokens).each do |token|
       @tokens.delete(token)
     end
+    @ordered_tokens = nil
   end
 
   # Replaces an existing token with a new token. If the first token doesn't
@@ -101,6 +101,7 @@ class Classlist
       remove(old_token)
     else
       @tokens = @tokens.to_h { |token, _| [(token == old_token) ? new_token : token, true] }
+      @ordered_tokens = nil
     end
 
     true
@@ -111,7 +112,7 @@ class Classlist
   end
 
   def to_s
-    to_a.join(" ")
+    ordered_tokens.join(" ")
   end
   alias_method :value, :to_s
 
@@ -140,6 +141,12 @@ class Classlist
   end
 
   protected
+
+  # Returns the tokens in order as a frozen array, which is built once and
+  # reused until the list changes.
+  def ordered_tokens
+    @ordered_tokens ||= @tokens.keys.freeze
+  end
 
   # Replaces all tokens in the list with the given tokens.
   def reset(tokens)

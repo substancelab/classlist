@@ -4,6 +4,7 @@ require "test_helper"
 
 require "classlist"
 require "classlist/add"
+require "classlist/reset"
 
 class TestClasslistAddition < Minitest::Test
   def test_adding_a_string_returns_the_token_added_to_entries
@@ -167,6 +168,41 @@ class TestClassListItem < Minitest::Test
   def test_returns_nil_if_index_is_lower_than_zero
     classlist = Classlist.new("foo bar")
     assert_nil(classlist.item(-1))
+  end
+
+  def test_reflects_tokens_added_after_reading
+    classlist = Classlist.new("foo")
+    classlist.item(0)
+    classlist.add("bar")
+    assert_equal("bar", classlist.item(1))
+  end
+
+  def test_reflects_tokens_removed_after_reading
+    classlist = Classlist.new("foo bar")
+    classlist.item(0)
+    classlist.remove("foo")
+    assert_equal("bar", classlist.item(0))
+  end
+
+  def test_reflects_tokens_replaced_after_reading
+    classlist = Classlist.new("foo bar")
+    classlist.item(0)
+    classlist.replace("foo", "baz")
+    assert_equal("baz", classlist.item(0))
+  end
+
+  def test_reflects_tokens_reset_after_reading
+    classlist = Classlist.new("foo bar")
+    classlist.item(0)
+    result = classlist + Classlist::Reset.new("baz")
+    assert_equal("baz", result.item(0))
+    assert_equal("foo", classlist.item(0))
+  end
+
+  def test_is_not_affected_by_changing_the_array_from_to_a
+    classlist = Classlist.new("foo bar")
+    classlist.to_a.shift
+    assert_equal("foo", classlist.item(0))
   end
 end
 
