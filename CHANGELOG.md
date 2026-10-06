@@ -24,6 +24,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Adding a String or Array to a `Classlist::Remove` or `Classlist::Reset` now adds those tokens after the operation, instead of turning the whole thing into an addition.
 - Replacing a token with itself leaves the classlist unchanged instead of removing the token.
+- `replace` raises `Classlist::ArgumentError` when either token contains whitespace, like `toggle` does, instead of storing a token with whitespace in it.
+- `toggle` raises `Classlist::ArgumentError` for tokens containing any whitespace, such as tabs and newlines, not just spaces.
 
 ## 1.1.3 - 2026-10-06
 

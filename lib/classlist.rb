@@ -90,6 +90,9 @@ class Classlist
   # exist, #replace returns false immediately, without adding the new token to
   # the token list.
   def replace(old_token, new_token)
+    validate_token(old_token)
+    validate_token(new_token)
+
     return false unless include?(old_token)
     return true if old_token == new_token
 
@@ -118,7 +121,7 @@ class Classlist
   # set to false, then token will only be removed, but not added. If set to
   # true, then token will only be added, but not removed.
   def toggle(token, force = nil)
-    raise ArgumentError, "The token can not contain whitespace." if token.to_s.include?(" ")
+    validate_token(token)
 
     if include?(token)
       remove(token) unless force == true
@@ -163,5 +166,9 @@ class Classlist
   def initialize_copy(source)
     super
     @tokens = @tokens.dup
+  end
+
+  def validate_token(token)
+    raise ArgumentError, "The token can not contain whitespace." if token.to_s.match?(/\s/)
   end
 end

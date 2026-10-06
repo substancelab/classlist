@@ -205,6 +205,21 @@ class TestClasslistReplace < Minitest::Test
     assert(classlist.replace("first", "first"))
     assert_equal(["first", "second"], classlist.to_a)
   end
+
+  def test_raises_error_when_new_token_contains_whitespace
+    classlist = Classlist.new("class")
+    assert_raises(Classlist::ArgumentError) {
+      classlist.replace("class", "with space")
+    }
+    assert_equal(["class"], classlist.to_a)
+  end
+
+  def test_raises_error_when_old_token_contains_whitespace
+    classlist = Classlist.new("class")
+    assert_raises(Classlist::ArgumentError) {
+      classlist.replace("with\tspace", "other")
+    }
+  end
 end
 
 class TestClasslistRemove < Minitest::Test
@@ -294,6 +309,13 @@ class TestClasslistToggle < Minitest::Test
     classlist = Classlist.new("class anotherclass")
     assert_raises(Classlist::ArgumentError) {
       classlist.toggle("with space")
+    }
+  end
+
+  def test_raises_error_when_token_contains_other_whitespace
+    classlist = Classlist.new("class anotherclass")
+    assert_raises(Classlist::ArgumentError) {
+      classlist.toggle("with\ttab")
     }
   end
 end
