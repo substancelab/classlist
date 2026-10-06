@@ -7,7 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
--
+### Changed
+
+- Operations are applied as soon as they are added to a Classlist instead of being kept pending until the Classlist is rendered. `Classlist#operations` is always empty, and `Classlist#resolve_operations` does nothing.
+- Adding to a Classlist or an Operation with `+` returns a new object and never changes either operand.
+- An operation shared between several classlists, or nested more than once, now gives the same result every time it is applied. Previously its nested operations were only applied the first time.
+- Adding, removing, toggling and checking for a token take constant time regardless of the number of tokens in the list.
+- Equality requires both sides to be of the same class, so a Classlist is never equal to an Operation.
+
+### Fixed
+
+- Adding a String or Array to a `Classlist::Remove` or `Classlist::Reset` now adds those tokens after the operation, instead of turning the whole thing into an addition.
 
 ## 1.1.3 - 2026-10-06
 

@@ -9,66 +9,65 @@ class Classlist
 
   class Error < StandardError; end
 
+  NO_OPERATIONS = [].freeze
+  private_constant :NO_OPERATIONS
+
   extend Forwardable
 
-  def_delegators :@entries, :each
+  def_delegators :to_a, :each
 
-  attr_reader :entries, :operations
-
-  # Returns the Classlist resulting from adding other to this classlist.
+  # Returns a new Classlist resulting from adding other to this classlist.
+  # Neither this classlist nor other are changed.
+  #
+  # Adding a Classlist::Operation applies the operation, adding a plain
+  # Classlist adds its tokens, and adding a String or Array adds the tokens in
+  # it.
   def +(other)
-    # When adding a basic Classlist to an existing list, assume an Add operation
-    if other.is_a?(Classlist) && !other.is_a?(Classlist::Operation)
-      other = Classlist::Add.new(other.entries.dup)
-    end
-
-    case other
-    when Classlist::Operation
-      add_operation(other)
-      self
-    when Classlist
-      result = other.merge(self)
-      Classlist.new(result)
+    result = dup
+    if other.is_a?(Classlist)
+      other.apply(result)
     else
-      # Resolve pending operations on a copy, so they are not lost and this
-      # classlist (including any shared operations) is left unchanged.
-      result = Classlist.new
-      result.copy_from(self, {}.compare_by_identity)
-      result.resolve_operations
       result.add(other)
-      result
     end
+    result
   end
 
   def ==(other)
-    return false unless other.is_a?(self.class)
-
-    resolve_operations(self)
-    other.resolve_operations
-
-    @entries == other.entries
+    other.instance_of?(self.class) &&
+      to_a == other.to_a &&
+      operations == other.operations
   end
 
   # Adds the given tokens to the list, omitting any that are already present.
   def add(tokens)
-    entries = build_entries(tokens)
-    entries.each do |entry|
-      self.entries.push(entry) unless self.entries.include?(entry)
+    build_entries(tokens).each do |token|
+      @tokens[token] = true
     end
   end
 
-  def add_operation(other)
-    @operations << other
+  # Applies the given operation to this classlist.
+  def add_operation(operation)
+    operation.apply(self)
+  end
+
+  # Changes target by adding the tokens in this classlist to it. Adding a plain
+  # Classlist to another acts as a Classlist::Add.
+  def apply(target)
+    target.add(to_a)
+  end
+
+  def entries
+    @tokens.keys
   end
 
   def include?(token)
-    entries.include?(token)
+    @tokens.key?(token)
   end
   alias_method :contains, :include?
 
   def initialize(entries = [])
-    @entries = build_entries(entries)
-    @operations = []
+    @tokens = {}
+    add(entries)
   end
 
   # Returns the item in the list by its index, or null if the index is greater
@@ -81,7 +80,7 @@ class Classlist
 
   # An integer representing the number of objects stored in the object.
   def length
-    entries.length
+    @tokens.size
   end
 
   # Returns a list of tokens in this classlist merged with the given classlist.
@@ -89,12 +88,17 @@ class Classlist
     (classlist.entries + entries).uniq
   end
 
+  # Operations are resolved as soon as they are added to a plain Classlist, so
+  # it never has any pending.
+  def operations
+    NO_OPERATIONS
+  end
+
   # Removes the specified tokens from the classlist, ignoring any that are not
   # present.
   def remove(tokens)
-    entries = build_entries(tokens)
-    entries.each do |entry|
-      self.entries.delete(entry)
+    build_entries(tokens).each do |token|
+      @tokens.delete(token)
     end
   end
 
@@ -107,24 +111,19 @@ class Classlist
     if include?(new_token)
       remove(old_token)
     else
-      index = entries.index(old_token)
-      entries[index] = new_token
+      @tokens = @tokens.to_h { |token, _| [(token == old_token) ? new_token : token, true] }
     end
 
     true
   end
 
-  def resolve_operations(original_classlist = self)
-    operations.each do |operation|
-      operation.resolve(original_classlist)
-    end
-
-    operations.clear
+  # Operations are resolved as soon as they are added, so there is nothing left
+  # to resolve. Kept for backwards compatibility.
+  def resolve_operations(_original_classlist = self)
   end
 
   def to_a
-    resolve_operations(self)
-    @entries
+    entries
   end
 
   def to_s
@@ -141,7 +140,7 @@ class Classlist
   def toggle(token, force = nil)
     raise ArgumentError, "The token can not contain whitespace." if token.to_s.include?(" ")
 
-    if entries.include?(token)
+    if include?(token)
       remove(token) unless force == true
       result = false
     else
@@ -158,28 +157,13 @@ class Classlist
 
   protected
 
-  # Replaces entries and pending operations with copies of those in source, so
-  # resolving operations on this classlist doesn't change source.
-  #
-  # memo maps already copied operations to their copies by identity. An
-  # operation reachable through several paths is copied only once, so the copy
-  # resolves exactly like the original does.
-  def copy_from(source, memo)
-    @entries = source.entries.dup
-    @operations = source.operations.map { |operation| operation.deep_copy(memo) }
-  end
-
-  def deep_copy(memo)
-    memo.fetch(self) do
-      copy = memo[self] = dup
-      copy.copy_from(self, memo)
-      copy
-    end
+  # Replaces all tokens in the list with the given tokens.
+  def reset(tokens)
+    @tokens = {}
+    add(tokens)
   end
 
   private
-
-  attr_writer :entries
 
   def build_entries(entries)
     case entries
@@ -194,5 +178,10 @@ class Classlist
     else
       raise Error, "Invalid entries: #{entries.inspect}"
     end.uniq
+  end
+
+  def initialize_copy(source)
+    super
+    @tokens = @tokens.dup
   end
 end

@@ -5,14 +5,9 @@ require "classlist/operation"
 # Classlist::Reset is an operation that removes all tokens from the original
 # classlist when merged.
 class Classlist::Reset < Classlist::Operation
-  def merge(original)
-    original.entries.replace(entries)
-  end
+  private
 
-  # #resolve changes the original classlist
-  def resolve(original)
-    original.entries.replace(entries)
-
-    super
+  def apply_self(target)
+    target.reset(entries)
   end
 end

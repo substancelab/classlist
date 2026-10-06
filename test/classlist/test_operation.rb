@@ -171,24 +171,49 @@ class TestClasslistOperation < Minitest::Test
     assert_equal(["bar"], second.to_a)
   end
 
-  def test_adding_a_string_resolves_shared_nested_operations_like_the_original
+  def test_adding_a_string_resolves_shared_nested_operations_consistently
     shared = Classlist::Add.new("a") + Classlist::Reset.new("b")
     base = Classlist.new +
       (Classlist::Add.new("x") + shared) +
       (Classlist::Remove.new("b") + shared)
     result = base + "z"
-    assert_equal(["a", "z"], result.to_a)
-    assert_equal(["a"], base.to_a)
+    assert_equal(["b", "z"], result.to_a)
+    assert_equal(["b"], base.to_a)
   end
 
-  def test_adding_a_string_leaves_operations_pending_on_the_original
+  def test_adding_a_string_does_not_change_the_original_or_the_operation
     change = Classlist::Remove.new("foo") + Classlist::Add.new("bar")
     base = Classlist.new("foo") + change
     _result = base + "baz"
-    assert_equal(["foo"], base.entries)
-    assert_equal(1, base.operations.length)
-    assert_same(change, base.operations.first)
-    assert_equal(1, change.operations.length)
-    assert_equal(["bar"], change.operations.first.entries)
+    assert_equal(["bar"], base.to_a)
+    assert_equal(["bar"], (Classlist.new("foo") + change).to_a)
+    assert_equal([Classlist::Add.new("bar")], change.operations)
+  end
+
+  def test_adding_an_operation_does_not_change_the_classlist
+    base = Classlist.new("foo")
+    _result = base + Classlist::Remove.new("foo")
+    assert_equal(["foo"], base.to_a)
+  end
+
+  def test_adding_operations_does_not_change_the_first_operation
+    removal = Classlist::Remove.new("foo")
+    _change = removal + Classlist::Add.new("bar")
+    assert_equal([], removal.operations)
+    assert_equal(["baz"], (Classlist.new("foo baz") + removal).to_a)
+  end
+
+  def test_a_shared_operation_gives_the_same_result_every_time
+    change = Classlist::Reset.new("a") + Classlist::Remove.new("a") + Classlist::Add.new("b")
+    first = Classlist.new("x") + change
+    second = Classlist.new("y") + change
+    assert_equal(["b"], first.to_a)
+    assert_equal(["b"], second.to_a)
+  end
+
+  def test_adding_a_string_to_an_operation_adds_the_tokens
+    change = Classlist::Remove.new("a") + "b"
+    result = Classlist.new("a c") + change
+    assert_equal(["c", "b"], result.to_a)
   end
 end
