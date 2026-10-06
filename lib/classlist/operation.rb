@@ -22,13 +22,6 @@ class Classlist::Operation < Classlist
   end
   alias_method :add_operation, :+
 
-  # Changes target by applying this operation and the operations following it.
-  def apply(target)
-    apply_self(target)
-    operations.each { |operation| operation.apply(target) }
-  end
-  alias_method :resolve, :apply
-
   def initialize(entries = [])
     super
     @operations = []
@@ -53,6 +46,17 @@ class Classlist::Operation < Classlist
   end
 
   private
+
+  # Changes target by applying this operation and the operations following it.
+  def apply_to(target)
+    apply_self(target)
+    operations.each { |operation| operation.apply(target) }
+  end
+
+  # Changes target by applying this operation alone. Subclasses implement this;
+  # a plain Classlist::Operation changes nothing.
+  def apply_self(target)
+  end
 
   def initialize_copy(source)
     super

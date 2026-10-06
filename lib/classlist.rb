@@ -36,12 +36,6 @@ class Classlist
     @ordered_tokens = nil
   end
 
-  # Changes target by adding the tokens in this classlist to it. Adding a plain
-  # Classlist to another acts as a Classlist::Add.
-  def apply(target)
-    target.add(to_a)
-  end
-
   def each(&block)
     ordered_tokens.each(&block)
   end
@@ -142,6 +136,12 @@ class Classlist
 
   protected
 
+  # Changes target by applying this classlist to it. Defined only here, so any
+  # Classlist can apply any other; subclasses override #apply_to instead.
+  def apply(target)
+    apply_to(target)
+  end
+
   # Returns the tokens in order as a frozen array, which is built once and
   # reused until the list changes.
   def ordered_tokens
@@ -155,6 +155,12 @@ class Classlist
   end
 
   private
+
+  # Adds the tokens in this classlist to target, so adding a plain Classlist to
+  # another acts as a Classlist::Add.
+  def apply_to(target)
+    target.add(to_a)
+  end
 
   def build_entries(entries)
     case entries

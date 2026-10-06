@@ -185,4 +185,23 @@ class TestClasslistOperation < Minitest::Test
     result = Classlist.new("a c") + change
     assert_equal(["c", "b"], result.to_a)
   end
+
+  def test_a_plain_operation_changes_nothing
+    result = Classlist.new("a") + Classlist::Operation.new("b")
+    assert_equal(["a"], result.to_a)
+  end
+
+  def test_a_plain_operation_applies_the_operations_following_it
+    result = Classlist.new("a") + (Classlist::Operation.new("b") + Classlist::Add.new("c"))
+    assert_equal(["a", "c"], result.to_a)
+  end
+
+  def test_apply_is_not_public
+    refute_respond_to(Classlist::Add.new("a"), :apply)
+    refute_respond_to(Classlist.new("a"), :apply)
+  end
+
+  def test_resolve_is_removed
+    refute_respond_to(Classlist::Add.new("a"), :resolve)
+  end
 end

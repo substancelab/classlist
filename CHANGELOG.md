@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 - `Classlist#operations` and `Classlist#resolve_operations`, since a Classlist no longer has pending operations. `Classlist::Operation#operations` remains.
+- `Classlist::Operation#resolve`. Custom operations implement the private `apply_self(target)` method instead, which changes target in place.
 
 ### Fixed
 
